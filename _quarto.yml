@@ -1,5 +1,7 @@
 project:
   title: "ENVSOCTY4GA3-OER-research"
+  type: website
+  output-dir: docs
 
-editor: visual
+editor: source
 
