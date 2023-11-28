@@ -1,0 +1,362 @@
+---
+title: "01-data-processing"
+format: html
+---
+Title: Using open educational and reproducible resources to teach spatial statistics: reflections on a student-instructor experience
+
+## Abstract
+Applied Spatial Statics, a fourth year course offered in the department of Earth, Environment and Society. It is the go-to course for those looking to expand their statistical expertise using Geographical Informational Systems software. Over the years, the course material and software required for the course has been transformed to become completely open and reproducible: the use of computational R notebooks and an open education resource in the form of a web-based textbook (https://paezha.github.io/spatial-analysis-r/). The course has also been taught in a flipped-classroom style with strategic incorporation of reflections using the "Reflective Learning Framework" (Whalen, 2020). In addition to these materials reducing the financial burden on the students, the reproducible and open components of the course has contributed to a smoother instruction transition.
+
+This presentation will take the audience under the hood of the R notebooks used to teach the course, the flipped-classroom teaching style, aspects of the material that allowed for continuity in teaching the course, and a sentiment analysis of past students' reflections. The presentation will be given by Anastasia, a student of the course (Winter 2020) who had the pleasure of teaching the course as a sessional instructor (Winter 2023), so lessons on the importance of reproducible course material format for instruction continuity and lessons learned will be shared. 
+
+
+```{r, include=FALSE, message=FALSE, warning=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+```
+```{r}
+library(tm) #using Corpus()
+library(text2vec) #using itoken()
+library(wordcloud) #using wordcloud()
+library(tidytext) #using unnest_tokens(),..
+library(igraph) # using graph_from_data_frame()...
+library(ggraph) #using ggraph()
+library(quanteda) #using kwic()
+library(kableExtra) #using column_spec()
+library(ldatuning) #using FindTopicsNumber
+library(topicmodels) #using LDA
+library(here)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+#load ananymous data:
+load("data/corpus_raw.rda")
+```
+
+## Winter 2022 reflections
+
+```{r}
+#Create text file of reflections
+text <- corpus_raw$text
+
+#Load the data as a corpus
+reflections <- Corpus(VectorSource(text))
+
+# Clean text
+reflections <- reflections %>% 
+  # Convert the text to lower case
+  tm_map(content_transformer(tolower)) %>%
+  # Remove numbers
+  tm_map(removeNumbers) %>%
+  # Remove english common stopwords
+  tm_map(removeWords, stopwords("english")) %>%
+  # Remove your own stop word
+  # specify your stopwords as a character vector
+  tm_map(removeWords, c("ENVSOCTY 4GA3", "envsocty 4GA3", "ENVSOCTY4GA3", "envsocty", "envsocty 4ga3", "4ga3", "4GA3", "course", "class", "classes", "paez", "Dr.", "Antonio", "Paez", "Anastasia", "Soukhov", "TA", "Instructor", "r", "studio", "even", "though", "many", "people", "different", "reflection", "also",
+                        "flipped", "classroom", "high")) %>%
+  # Remove punctuations
+  tm_map(removePunctuation) %>%
+  # Eliminate extra white spaces
+  tm_map(stripWhitespace) #%>%
+  # Text stemming
+  #tm_map(stemDocument)
+```
+
+```{r}
+# Create new data frame with the cleaned corpus 
+reflections_corpus <- data.frame(text = sapply(reflections, as.character), stringsAsFactors = FALSE)
+reflection_it_train = itoken(reflections_corpus$text, progressbar = FALSE)
+reflection_vocab = create_vocabulary(reflection_it_train)
+
+# Cut out terms that have a minimum count of 1 
+reflection_vocab <- prune_vocabulary(reflection_vocab, term_count_min = 1)
+```
+
+```{r}
+dtm_reflections <- TermDocumentMatrix(reflections)
+m <- as.matrix(dtm_reflections)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+```
+
+### Word cloud
+```{r word-cloud, fig.height=8, fig.width=8, echo=FALSE, fig.cap="\\label{fig:word-cloud}A word cloud depicting common words identified in the learners' reflections."}
+#Creates the word cloud
+# png(file=paste0(here::here(),"/images/word_cloud_plot.png"))
+# wordcloud(words = d$word, freq = d$freq,
+#           max.words=200, random.order=FALSE,
+#           rot.per=0.35, 
+#           colors=brewer.pal(8, "Dark2"))
+# dev.off()
+knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
+```
+## Relationships between words
+
+```{r reflections-bigrams}
+# n can be changed 
+reflections_bigrams <- reflections_corpus %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+reflections_trigrams <- reflections_corpus %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 3)
+
+# Bigrams and trigrams that are most common 
+top_reflections_bigrams <- reflections_bigrams %>%
+  count(bigram, sort = TRUE)
+top_reflections_trigrams <- reflections_trigrams %>% 
+  count(trigram, sort = TRUE)
+```
+
+```{r, include=FALSE}
+reflections_bigrams_separated <- reflections_bigrams %>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+reflections_bigram_counts <- reflections_bigrams_separated %>% 
+  count(word1, word2, sort = TRUE)
+
+# Adjust the parameter below to filter out bigrams based on desired number of occurrence
+# Error will occur if n is outside the range of occurrences 
+reflections_bigram_graph <- reflections_bigram_counts %>%
+  filter(n > 7) %>%
+  graph_from_data_frame()
+set.seed(2022)
+a <- grid::arrow(type = "closed", length = unit(.15, "inches"))
+```
+
+```{r, include=FALSE}
+ReflectionsTextDF <- data.frame(text = sapply(reflections_corpus, as.character), stringsAsFactors = FALSE)
+R_it_train = itoken(ReflectionsTextDF$text, progressbar = FALSE)
+reflections_vocab = create_vocabulary(R_it_train)
+reflections_vocab <- prune_vocabulary(reflections_vocab)
+```
+
+```{r, echo=FALSE, fig.align = 'center', out.width = "1\\linewidth", fig.cap = "\\label{fig:reflections-visual}Most common bigrams found in student reflections from ENVSOCTY 4GA3"}
+ggraph(reflections_bigram_graph, layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE,
+                 arrow = a, end_cap = circle(.07, 'inches')) +
+  geom_node_point(color = "lightblue", size = 4) +
+  geom_node_text(aes(label = name), repel = TRUE) + 
+  theme_void()
+```
+
+```{r, include=FALSE}
+# NOTE: this needs to be updates
+
+# Import reflections text (not cleaned of stop words or punctuation) from first step to make a corpus
+reflections_quanteda <- corpus(text)
+# Extraction of various search terms and the surrounding sentence context
+kwic_pol_1 <- kwic(tokens(reflections_quanteda), pattern = "helped", window = 20)
+kwic_pol_2 <- kwic(tokens(reflections_quanteda), pattern = "confidence", window = 20)
+kwic_pol_3 <- kwic(tokens(reflections_quanteda), pattern = "enjoyed", window = 20)
+kwic_pol_4 <- kwic(tokens(reflections_quanteda), pattern = "easy", window = 20)
+kwic_pol_5 <- kwic(tokens(reflections_quanteda), pattern = "valuable", window = 20)
+kwic_pol_6 <- kwic(tokens(reflections_quanteda), pattern = "excited", window = 20)
+kwic_pol_7 <- kwic(tokens(reflections_quanteda), pattern = "confident", window = 20)
+kwic_pol_8 <- kwic(tokens(reflections_quanteda), pattern = "easier", window = 20)
+kwic_pol_9 <- kwic(tokens(reflections_quanteda), pattern = "helpful", window = 20)
+kwic_pol_10 <- kwic(tokens(reflections_quanteda), pattern = "beneficial", window = 20)
+kwic_pol_11 <- kwic(tokens(reflections_quanteda), pattern = "support", window = 20)
+kwic_pol_12 <- kwic(tokens(reflections_quanteda), pattern = "gain", window = 20)
+kwic_pol_13 <- kwic(tokens(reflections_quanteda), pattern = "pretty", window = 20)
+kwic_pol_14 <- kwic(tokens(reflections_quanteda), pattern = "strong", window = 20)
+kwic_pol_15 <- kwic(tokens(reflections_quanteda), pattern = "correct", window = 20)
+kwic_pol_16 <- kwic(tokens(reflections_quanteda), pattern = "effective", window = 20)
+kwic_pol_17 <- kwic(tokens(reflections_quanteda), pattern = "skill", window = 20)
+kwic_pol_18 <- kwic(tokens(reflections_quanteda), pattern = "accurate", window = 20)
+kwic_pol_19 <- kwic(tokens(reflections_quanteda), pattern = "glad", window = 20)
+kwic_pol_20 <- kwic(tokens(reflections_quanteda), pattern = "improve", window = 20)
+kwic_pol_21 <- kwic(tokens(reflections_quanteda), pattern = "positive", window = 20)
+kwic_pol_22 <- kwic(tokens(reflections_quanteda), pattern = "happy", window = 20)
+kwic_pol_23 <- kwic(tokens(reflections_quanteda), pattern = "proper", window = 20)
+#stopped below 'count' of 7 ('reflection_sentiments %>% filter(sentiment == "positive") %>% arrange(-count))
+```
+
+```{r, echo=FALSE}
+# NOTE: this needs to be updated
+text_tbl <- data.frame(
+  Terms = c("helped", "confidence", "enjoyed", "valuable", "excited"),
+  Context = c(
+    "... This was linked with hypothesis testing, which **helped** me understand set boundaries in the setting of point pattern analysis",
+    "... I was used to seeing them in ArcGIS, which is a more user-friendly output. However, I stuck with it and now I can confidently read Moran Tests in R... Mostly, this course has been a lesson in **confidence** for me.",
+    "I’ve **enjoyed** doing these reflections as I feel it has allowed me to take deeper meaning from the weekly activities of the class.",
+    "R is generally seen as one of the more basic coding languages... [its] utility in data preparation is very **valuable**. The pre-processing stage of the project was the most engaging. ",
+    "Within the midterm reflection I talked about how I was **excited** to continue to engage with spatial stats and here we are. I’ve engaged with more of it and yet I am still very much **excited**.")
+)
+kbl(text_tbl,
+    booktabs = TRUE,
+    caption = "The context of key terms that were identified as common bigrams.") %>%
+  kable_paper(full_width = F) %>%
+  kable_styling(latex_options = c("striped")) %>%
+  column_spec(1, bold = T) %>%
+  column_spec(2, width = "20em")
+```
+
+### Sentiment Analysis
+
+Next, we analyzed the sentiment or emotional content of the text from learners' reflections.
+We used a sentiment lexicon called `bing` from Bing Liu and collaborators which provided a dictionary that classifies words in a binary way according to whether they express a negative or positive sentiment.
+The use of a sentiment lexicon is particularly useful because learners described different emotions and thoughts based on their experiences in the course.
+
+In Figure \ref{fig:sentiment-graph}, sentiments expressed more than 3 times in the corpus are displayed.
+There were 41 negative and 57 positive sentiments found in learners' reflections.
+The most common negative sentiments are *congestion* and *issues* which likely refer to the concept of traffic congestion or broader transportation issues that learners were introduced to in the course and that featured in many lessons.
+The most common positive sentiment was *helped* followed by *efficient*.
+
+```{r, include=FALSE}
+reflections_tidy <- reflections_corpus %>% 
+  unnest_tokens(word, text)
+```
+
+```{r, include=FALSE}
+data(stop_words)
+reflections_tidy <- reflections_tidy %>%
+  anti_join(stop_words, by = "word")
+```
+
+```{r, include=FALSE}
+reflections_tidy <-  reflections_tidy %>%
+  left_join(reflections_tidy %>%
+              count(word),
+            by = "word") %>%
+  distinct(word, .keep_all = TRUE) %>%
+  rename(count = n)
+```
+
+```{r, include=FALSE}
+reflections_tidy %>% arrange(desc(count))
+```
+
+```{r, include=FALSE}
+reflections_sentiments <- reflections_tidy %>%
+  inner_join(get_sentiments("bing"), by = c("word" = "word"))
+reflections_sentiments
+```
+
+```{r sentiment-graph, echo=FALSE}
+reflections_sentiments %>%
+  count(sentiment, word, wt = count) %>%
+  ungroup() %>%
+  filter(n >= 5) %>%
+  mutate(n = ifelse(sentiment == "negative", -n, n)) %>%
+  mutate(term = reorder(word, n)) %>%
+  ggplot(aes(word, n, fill = sentiment)) +
+  geom_bar(stat = "identity") +
+  ylab("Contribution to sentiment") +
+  coord_flip()
+```
+
+Again, we examined the context in which these sentiments can be found to better understand *what* was positive or negative about their experience in the course or using computational notebooks.
+In Table \ref{tab:sentiment-context}, we provide some text examples of the different emotions discussed by learners.
+These examples demonstrate that learners drew upon their own experiences and perspectives, which were shaped by the course lectures, to reflect on what they learned by using the computational notebooks.
+
+```{r, include=FALSE}
+# stopped below 'count' of 8 (reflections_sentiments %>% filter(sentiment == "negative") %>% arrange(-count)
+kwic_pol_neg1 <- kwic(tokens(reflections_quanteda), pattern = "regression", window = 40)
+kwic_pol_neg2 <- kwic(tokens(reflections_quanteda), pattern = "difficult", window = 40)
+kwic_pol_neg3 <- kwic(tokens(reflections_quanteda), pattern = "hard", window = 40)
+kwic_pol_neg4 <- kwic(tokens(reflections_quanteda), pattern = "struggled", window = 40)
+kwic_pol_neg5 <- kwic(tokens(reflections_quanteda), pattern = "challenging", window = 40)
+kwic_pol_neg6 <- kwic(tokens(reflections_quanteda), pattern = "plot", window = 40)
+kwic_pol_neg7 <- kwic(tokens(reflections_quanteda), pattern = "error", window = 40)
+kwic_pol_neg8 <- kwic(tokens(reflections_quanteda), pattern = "wrong", window = 40)
+kwic_pol_neg9 <- kwic(tokens(reflections_quanteda), pattern = "issue", window = 40)
+kwic_pol_neg10 <- kwic(tokens(reflections_quanteda), pattern = "critical", window = 40)
+kwic_pol_neg11 <- kwic(tokens(reflections_quanteda), pattern = "crime", window = 40)
+kwic_pol_neg12 <- kwic(tokens(reflections_quanteda), pattern = "confused", window = 40)
+kwic_pol_neg13 <- kwic(tokens(reflections_quanteda), pattern = "frustrated", window = 40)
+kwic_pol_neg14 <- kwic(tokens(reflections_quanteda), pattern = "complex", window = 40)
+kwic_pol_neg15 <- kwic(tokens(reflections_quanteda), pattern = "stress", window = 40)
+```
+
+```{r, echo=FALSE}
+text_tbl <- data.frame(
+  Terms = c("regression", "difficult", "hard", "struggled"),
+  Context = c(
+    "A **regression** model could accurately represent how population density and ethnicity affect how people vote in space.",
+    "For example, trying to explain the concept to someone else in order to improve my own understanding and hopefully increase my retention of the material. While it may be **difficult** to find the time or motivation to put these practices in place...",
+    ". I put great value in having this information because I understand how applicable it may be in the future so I worked **hard** to understand how to write the code in R and read the corresponding plots",
+    "Because of my complacency, I **struggled** a little when trying to complete the first few activities.")
+)
+kbl(text_tbl,
+    booktabs = TRUE,
+    caption = "The context of common sentiments that were identified in learners' reflections. (negative only)") %>%
+  kable_paper(full_width = F) %>%
+  kable_styling(latex_options = c("striped")) %>%
+  column_spec(1, bold = T) %>%
+  column_spec(2, width = "20em")
+```
+```{r}
+kbl(text_tbl,
+    booktabs = TRUE,
+    caption = "The context of common sentiments that were identified in learners' reflections.") %>%
+  kable_paper(full_width = F) %>%
+  kable_styling(latex_options = c("striped")) %>%
+  column_spec(1, bold = T) %>%
+  column_spec(3, width = "10em")
+```
+
+### Topics in Reflection
+
+```{r corpus-dtm, include=FALSE}
+reflections_dtm <- DocumentTermMatrix(reflections)
+```
+
+```{r, include=FALSE}
+# Select number of topics for the LDA model using `ldatuning` 
+# Use document term matrix created above
+reflections_lda_num <- FindTopicsNumber(
+  reflections_dtm, 
+  topics = seq(from = 2, to = 21, by = 1),
+  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+  method = "Gibbs",
+  #control = list(seed = 77),
+  #mc.cores = 2L,
+  #verbose = TRUE
+)
+```
+
+```{r, include=FALSE}
+FindTopicsNumber_plot(reflections_lda_num)
+# The graphs suggest that there are ~10 topics in the corpus, but this could be difficult to interpret
+# Topics could be explored starting with k = 7
+```
+
+```{r, cache = TRUE, include=FALSE}
+reflections_lda <- LDA(reflections_dtm, k = 5, method = "Gibbs", control = NULL, model = NULL)
+```
+
+```{r municipal-topics, include=FALSE}
+reflections_topics <- tidy(reflections_lda, matrix = "beta")
+```
+
+```{r reflections-terms-creating"}
+reflections_top_terms <- reflections_topics %>%
+  group_by(topic) %>%
+  slice_max(beta, n = 10) %>% 
+  ungroup() %>%
+  arrange(topic, -beta)
+```
+
+
+```{r reflections-terms, echo=FALSE, out.width="1\\linewidth", cache=TRUE, fig.cap="\\label{fig:academic-terms}Topics identified in the learners' reflections according to clusters of words."}
+# png(file=paste0(here::here(),"/images/topic_clusters_plot.png"))
+# reflections_top_terms %>%
+#   mutate(term = reorder_within(term, beta, topic),
+#          topic = case_when(topic == 1 ~ 'Threshold concepts',
+#                            topic == 2 ~ 'Science communication',
+#                            topic == 3 ~ 'New tools',
+#                            topic == 4 ~ 'Webbook',
+#                            topic == 5 ~ 'Flipped classroom')) %>%
+#   ggplot(aes(beta, term, fill = factor(topic))) +
+#   geom_col(show.legend = FALSE) +
+#   facet_wrap(~ topic, scales = "free") +
+#   scale_y_reordered()
+# dev.off()
+
+knitr::include_graphics(paste0(here::here(),"/images/topic_clusters_plot.png"))
+```
+
+1) -- "Threshold concepts" 
+2) -- "science communication" 
+3) -- "new tools for the future"
+4) -- "webbook"
+5) -- "flipped classroom"

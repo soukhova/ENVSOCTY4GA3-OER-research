@@ -1,0 +1,269 @@
+---
+title: "Teaching spatial statistics using open educational and reproducible resources"
+author: Anastasia Soukhov *(PhD Candidate, McMaster University)*
+format: 
+    revealjs:
+      theme: solarized
+listing:
+  template: gallery.ejs
+---
+
+```{r}
+library(webshot)
+```
+
+### Overview
+
+A)  The course and materials used
+B)  Learners' reflections
+C)  My reflections
+
+::: notes
+I'm a PhD Candidate in the School of Earth, Environment and Society.
+
+Researching equitable, just and sustainable transportation systems.
+
+Mostly quantitative spatial work; taught Applied Spatial Statistics (ENVSOCTY 4GA3) Winter 2023 using reproducible flow.
+
+This presentation is about my experience as a sessional using Open Educational Resources and the perspective of the learners (their reflections).
+
+This presentation - and anything I seem to be doing - is fully reproducible.
+:::
+
+# A) Course materials
+
+------------------------------------------------------------------------
+
+### Getting started with ENVSOCTY 4GA3
+
+::: columns
+::: {.column width="50%"}
+The [Webbook](https://paezha.github.io/spatial-analysis-r/):
+
+```{r, include=FALSE, eval=FALSE}
+webshot(url="https://paezha.github.io/spatial-analysis-r/", file="images/webbook.png")
+```
+
+```{r, fig.align='center'}
+knitr::include_graphics("images/webbook.png")
+```
+:::
+
+::: {.column width="50%"}
+-   Part 1: Introductions
+-   Part 2: Getting to know the techniques
+-   Part 3: Point pattern analysis
+-   Part 4: Areal unit data
+-   Part 5: Field data
+:::
+:::
+
+::: notes
+The availability of this textbook and its reproducibility made catching up on the material much easier! First time teaching. I also reused the course layout / breakdown
+:::
+
+<!-- --- -->
+
+<!-- ### R, RStudio, and package installation: -->
+
+<!-- ```{r} -->
+
+<!-- #| echo: TRUE -->
+
+<!-- #| eval: FALSE -->
+
+<!-- install.packages("tidyverse") -->
+
+<!-- install.packages("remotes") -->
+
+<!-- remotes::install_github("paezha/isdas") -->
+
+<!-- ``` -->
+
+<!-- ```{r, fig.align='center'} -->
+
+<!-- knitr::include_graphics("images/isdas.gif") -->
+
+<!-- ``` -->
+
+------------------------------------------------------------------------
+
+### The [webbook](https://paezha.github.io/spatial-analysis-r/) is accompanied by [{isdas}](https://github.com/paezha/isdas)
+
+::: columns
+::: {.column width="50%"}
+-   .Rmd templates with Chapters.
+-   .Rmd templates with Activities.
+
+```{r, fig.align='center'}
+knitr::include_graphics("images/templates.png")
+```
+:::
+
+::: {.column width="50%"}
+-   Data sets used in the Chapters and Activities:
+
+```{r, fig.align='center'}
+knitr::include_graphics("images/isdas.gif")
+```
+:::
+:::
+
+::: notes
+1 activity per chapter... learners can knit to .pdf, .html, and .docx; high-quality deliverable that learners take ownership of! Fully reproducible and customizable
+:::
+
+------------------------------------------------------------------------
+
+### Mark breakdown for learners
+
+-   40% weekly assignments; flipped classroom
+-   30% final group project report
+-   30% reflections
+
+------------------------------------------------------------------------
+
+### Example reflection question
+
+*What is in your opinion the most important thing that you learned while in this course? How did you learn it? What challenges and opportunities did you face when learning this thing? Did learning this thing impact you? If so, how?*
+
+*Would you say this experience will impact how you do things in the future, and if so how?*
+
+------------------------------------------------------------------------
+
+### Reflection marking rubric
+
+```{r, fig.align='center'}
+knitr::include_graphics("images/RLF-1.png")
+```
+
+[Reflective learning framework](https://tinyurl.com/RefFL) and [video](https://tinyurl.com/RefFLvideo)
+
+------------------------------------------------------------------------
+
+### Reflection marking rubric
+
+```{r, fig.align='center'}
+knitr::include_graphics("images/RLF-2.png")
+```
+
+[Reflective learning framework](https://tinyurl.com/RefFL) and [video](https://tinyurl.com/RefFLvideo)
+
+------------------------------------------------------------------------
+
+### What we *think*  this course does
+
+-   Saves the learners money
+-   Focuses the mind away from the trivial
+-   Teaches valuable skills
+-   Incentivises ownership of the learning process
+-   Provides a positive challenge
+
+# B) But what did they think? Learners' reflections
+
+------------------------------------------------------------------------
+
+### Flipped classroom (1/5)
+
+::: columns
+::: {.column width="50%"}
+*"I enjoyed the split classroom style. It made for a demanding but not stressful experience. I also liked the lab and classroom topics, applying the concepts and then learning the details was really helpful for understanding.."*
+:::
+
+::: {.column width="50%"}
+```{r word-cloud-load-1, fig.align='center'}
+knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
+```
+:::
+:::
+
+------------------------------------------------------------------------
+
+### New tools for the future (2/5)
+
+::: columns
+::: {.column width="50%"}
+*"...I've even done a bit of R coding in my free time using open-source data just for fun when a random topic ... that I want to investigate further (i.e. covid cases and vaccinations, real estate prices...)"*
+:::
+
+::: {.column width="50%"}
+```{r word-cloud-load-2, fig.align='center'}
+knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
+```
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Science communication (3/5)
+
+::: columns
+::: {.column width="50%"}
+*" This reflection merely put into words a realization that I had failed to experience in earlier stats courses:... being able to analyse your data in a way that is fair, comparable, and communicable is invaluable."*
+:::
+
+::: {.column width="50%"}
+```{r word-cloud-load-3, fig.align='center'}
+knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
+```
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Threshold concepts: e.g., null landscapes (4/5)
+
+::: columns
+::: {.column width="50%"}
+*"Learning about the null landscape was where my mindset started to switch.... So naturally, I started to think about how you could consider points random....\[how\] to explain randomness statistically. This was linked with hypothesis testing, which helped me understand set boundaries in the setting of point pattern analysis."*
+:::
+
+::: {.column width="50%"}
+```{r word-cloud-load-4, fig.align='center'}
+knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
+```
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Webbook (5/5)
+
+::: columns
+::: {.column width="50%"}
+*" The textbook was very comprehensive, and the integration with R-Studio definitely enhanced my understanding of the code connected with each concept.."*
+
+*"While the textbook was a superb resource, it is also quite dense, and something like a chapter summary at the end that highlights the key takeaways ...."*
+:::
+
+::: {.column width="50%"}
+```{r word-cloud-load-5, fig.align='center'}
+knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
+```
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Clusters of topics within learners' reflections
+
+```{r topic-clusters-plot, fig.align='center'}
+knitr::include_graphics(paste0(here::here(),"/images/topic_clusters_plot.png"))
+```
+
+# C) My reflections
+
+------------------------------------------------------------------------
+
+### My reflections
+
+-   Open course material made it easier for me to catch-up
+    -   Made me more confident
+    -   Transparent; who worked on it before me and what they did.
+-   The flipped classroom; facilitated a space for learning.
+-   Reflections and group project in place of tests: learners make connections between feelings, thoughts and concepts as well as apply them in a project of their choosing.
+-   Thankful for the learners before me; that got the course progression correct: *"... By the time the course had moved into spatially continuous data, I was in a pretty good groove. Thanks to my gradual build-up of better statistical understanding over the course of the semester, I'd say I had the easiest time with this section"*
+
+# Thank you! Questions/Comments?
+
+Anastasia Soukhov (soukhoa\@mcmaster.ca)
