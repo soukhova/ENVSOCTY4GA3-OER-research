@@ -1,0 +1,28 @@
+/*-- scss:defaults --*/
+
+@import url(./fonts/league-gothic/league-gothic.css);
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
+// fonts
+$font-family-sans-serif: Lato, sans-serif !default;
+
+// colors
+$body-bg: #DBDBDD !default;
+$body-color: #5E6A71 !default;
+$link-color: #FDBF57 !default;
+$selection-bg: #5E6A71 !default;
+
+// headings
+$presentation-heading-font: "League Gothic", sans-serif !default;
+$presentation-heading-color: #7A003C !default;
+$presentation-heading-text-transform: uppercase !default;
+
+// code blocks
+$code-block-border-color: #FDBF57 !default;
+
+/*-- scss:rules --*/
+
+html * {
+  color-profile: sRGB;
+  rendering-intent: auto;
+}

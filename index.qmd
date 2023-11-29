@@ -1,11 +1,16 @@
 ---
-title: "Teaching spatial statistics using open educational and reproducible resources"
+title: "Teaching spatial statistics"
+subtitle: "Using open educational and reproducible resources"
 author: Anastasia Soukhov *(PhD Candidate, McMaster University)*
 format: 
-    revealjs:
-      theme: solarized
-listing:
-  template: gallery.ejs
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    logo: images/mcm-sci-sees_left-col.png
+    theme: [default, custom.scss]
+resources: 
+  demo.pdf
 ---
 
 ```{r}
@@ -92,18 +97,20 @@ The availability of this textbook and its reproducibility made catching up on th
 
 ::: columns
 ::: {.column width="50%"}
--   .Rmd templates with Chapters.
--   .Rmd templates with Activities.
+.Rmd templates with:
 
-```{r, fig.align='center'}
+  - Chapters
+  - Activities
+
+```{r, fig.align='center', out.width="80%"}
 knitr::include_graphics("images/templates.png")
 ```
 :::
 
 ::: {.column width="50%"}
--   Data sets used in the Chapters and Activities:
+Data sets used in the Chapters and Activities:
 
-```{r, fig.align='center'}
+```{r, fig.align='center', out.width="80%"}
 knitr::include_graphics("images/isdas.gif")
 ```
 :::
@@ -171,7 +178,7 @@ knitr::include_graphics("images/RLF-2.png")
 :::
 
 ::: {.column width="50%"}
-```{r word-cloud-load-1, fig.align='center'}
+```{r word-cloud-load-1, fig.align='center', out.width="100%"}
 knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 ```
 :::
@@ -187,7 +194,7 @@ knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 :::
 
 ::: {.column width="50%"}
-```{r word-cloud-load-2, fig.align='center'}
+```{r word-cloud-load-2, fig.align='center', out.width="100%"}
 knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 ```
 :::
@@ -203,7 +210,7 @@ knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 :::
 
 ::: {.column width="50%"}
-```{r word-cloud-load-3, fig.align='center'}
+```{r word-cloud-load-3, fig.align='center', out.width="100%"}
 knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 ```
 :::
@@ -219,7 +226,7 @@ knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 :::
 
 ::: {.column width="50%"}
-```{r word-cloud-load-4, fig.align='center'}
+```{r word-cloud-load-4, fig.align='center', out.width="100%"}
 knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 ```
 :::
@@ -237,7 +244,7 @@ knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 :::
 
 ::: {.column width="50%"}
-```{r word-cloud-load-5, fig.align='center'}
+```{r word-cloud-load-5, fig.align='center', out.width="100%"}
 knitr::include_graphics(paste0(here::here(),"/images/word_cloud_plot.png"))
 ```
 :::
@@ -255,15 +262,24 @@ knitr::include_graphics(paste0(here::here(),"/images/topic_clusters_plot.png"))
 
 ------------------------------------------------------------------------
 
-### My reflections
+### Wrapping up: my reflections
 
+-   Transparency and openness of course material: easier for all
+-   The flipped classroom format: two-way knowledge transfer.
+-   Reflections in place of tests: gives space for connections
+
+::: notes
 -   Open course material made it easier for me to catch-up
     -   Made me more confident
     -   Transparent; who worked on it before me and what they did.
+    -   Thankful for the learners before me; that got the course progression correct: *"... By the time the course had moved into spatially continuous data, I was in a pretty good groove. Thanks to my gradual build-up of better statistical understanding over the course of the semester, I'd say I had the easiest time with this section"*
 -   The flipped classroom; facilitated a space for learning.
 -   Reflections and group project in place of tests: learners make connections between feelings, thoughts and concepts as well as apply them in a project of their choosing.
--   Thankful for the learners before me; that got the course progression correct: *"... By the time the course had moved into spatially continuous data, I was in a pretty good groove. Thanks to my gradual build-up of better statistical understanding over the course of the semester, I'd say I had the easiest time with this section"*
+
+:::
 
 # Thank you! Questions/Comments?
 
-Anastasia Soukhov (soukhoa\@mcmaster.ca)
+I'd like to acknowledge...
+
+*Anastasia Soukhov (soukhoa\@mcmaster.ca)*
