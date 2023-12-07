@@ -1,16 +1,18 @@
 ---
-title: "Teaching spatial statistics"
-subtitle: "Using open educational and reproducible resources"
-author: Anastasia Soukhov *(PhD Candidate, McMaster University)*
+title: "Teaching applied spatial statistics: \nUsing open educational and reproducible resources"
+subtitle: "   "
+author: "**Anastasia Soukhov** *(PhD Candidate, McMaster University)* Antonio Paez *(Associate Professor, McMaster University)*"
 format: 
   revealjs:
     slide-number: true
+    incremental: true   
     chalkboard:
       buttons: false
     logo: images/mcm-sci-sees_left-col.png
     theme: [default, custom.scss]
 resources: 
   demo.pdf
+
 ---
 
 ```{r}
@@ -19,7 +21,7 @@ library(webshot)
 
 ### Overview
 
-A)  The course and materials used
+A)  The course materials
 B)  Learners' reflections
 C)  My reflections
 
@@ -55,11 +57,15 @@ knitr::include_graphics("images/webbook.png")
 :::
 
 ::: {.column width="50%"}
--   Part 1: Introductions
--   Part 2: Getting to know the techniques
--   Part 3: Point pattern analysis
--   Part 4: Areal unit data
--   Part 5: Field data
+Part 1: Introductions
+
+Part 2: Getting to know the techniques
+
+Part 3: Point pattern analysis
+
+Part 4: Areal unit data
+
+Part 5: Field data
 :::
 :::
 
@@ -93,22 +99,19 @@ The availability of this textbook and its reproducibility made catching up on th
 
 ------------------------------------------------------------------------
 
-### The [webbook](https://paezha.github.io/spatial-analysis-r/) is accompanied by [{isdas}](https://github.com/paezha/isdas)
+### The [webbook](https://paezha.github.io/spatial-analysis-r/) is accompanied by R package [{isdas}](https://github.com/paezha/isdas):
 
 ::: columns
 ::: {.column width="50%"}
-.Rmd templates with:
+Contains .Rmd templates (Chapters and Activities):
 
-  - Chapters
-  - Activities
-
-```{r, fig.align='center', out.width="80%"}
+```{r, fig.align='center', out.width="70%"}
 knitr::include_graphics("images/templates.png")
 ```
 :::
 
 ::: {.column width="50%"}
-Data sets used in the Chapters and Activities:
+Contains data sets:
 
 ```{r, fig.align='center', out.width="80%"}
 knitr::include_graphics("images/isdas.gif")
@@ -124,7 +127,7 @@ knitr::include_graphics("images/isdas.gif")
 
 ### Mark breakdown for learners
 
--   40% weekly assignments; flipped classroom
+-   40% weekly assignments: delivered as a "flipped classroom"
 -   30% final group project report
 -   30% reflections
 
@@ -138,7 +141,7 @@ knitr::include_graphics("images/isdas.gif")
 
 ------------------------------------------------------------------------
 
-### Reflection marking rubric
+### Reflection marking rubric _(Whalen, 2020)_
 
 ```{r, fig.align='center'}
 knitr::include_graphics("images/RLF-1.png")
@@ -148,7 +151,7 @@ knitr::include_graphics("images/RLF-1.png")
 
 ------------------------------------------------------------------------
 
-### Reflection marking rubric
+### Reflection marking rubric _(Whalen, 2020)_
 
 ```{r, fig.align='center'}
 knitr::include_graphics("images/RLF-2.png")
@@ -158,7 +161,7 @@ knitr::include_graphics("images/RLF-2.png")
 
 ------------------------------------------------------------------------
 
-### What we *think*  this course does
+### What we *think* this course does
 
 -   Saves the learners money
 -   Focuses the mind away from the trivial
@@ -268,6 +271,10 @@ knitr::include_graphics(paste0(here::here(),"/images/topic_clusters_plot.png"))
 -   The flipped classroom format: two-way knowledge transfer.
 -   Reflections in place of tests: gives space for connections
 
+### Room for improvement:
+-   How to engage the disengaged?
+-   Prevalence of AI: the temptation for use on take-home reflections 
+
 ::: notes
 -   Open course material made it easier for me to catch-up
     -   Made me more confident
@@ -280,6 +287,7 @@ knitr::include_graphics(paste0(here::here(),"/images/topic_clusters_plot.png"))
 
 # Thank you! Questions/Comments?
 
-I'd like to acknowledge...
-
 *Anastasia Soukhov (soukhoa\@mcmaster.ca)*
+
+
+_I'd like to acknowledge funding recieved through the MacPherson Institute's _2020/21 OER Creation Grant_ (PI: Antonio Paez)_
